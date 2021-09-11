@@ -107,10 +107,21 @@ public class EurekaBootStrap implements ServletContextListener {
      * @see
      * javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
+    /**
+     * 项目初始化接口 @see ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+     * 监听器 web.xml中配置
+     * @param event
+     */
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try {
+            /**
+             * 初始化服务环境变量
+             */
             initEurekaEnvironment();
+            /**
+             * 初始化容器上下文
+             */
             initEurekaServerContext();
 
             ServletContext sc = event.getServletContext();
@@ -158,6 +169,7 @@ public class EurekaBootStrap implements ServletContextListener {
         ApplicationInfoManager applicationInfoManager = null;
 
         if (eurekaClient == null) {
+            //
             EurekaInstanceConfig instanceConfig = isCloud(ConfigurationManager.getDeploymentContext())
                     ? new CloudInstanceConfig()
                     : new MyDataCenterInstanceConfig();
