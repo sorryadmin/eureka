@@ -175,7 +175,7 @@ public class EurekaBootStrap implements ServletContextListener {
                     : new MyDataCenterInstanceConfig();
             
             applicationInfoManager = new ApplicationInfoManager(
-                    instanceConfig, new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get());
+                        instanceConfig, new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get());
             
             EurekaClientConfig eurekaClientConfig = new DefaultEurekaClientConfig();
             eurekaClient = new DiscoveryClient(applicationInfoManager, eurekaClientConfig);
@@ -210,7 +210,7 @@ public class EurekaBootStrap implements ServletContextListener {
                 applicationInfoManager
         );
 
-        serverContext = new DefaultEurekaServerContext(
+            serverContext = new DefaultEurekaServerContext(
                 eurekaServerConfig,
                 serverCodecs,
                 registry,
@@ -223,8 +223,9 @@ public class EurekaBootStrap implements ServletContextListener {
         serverContext.initialize();
         logger.info("Initialized server context");
 
-        // Copy registry from neighboring eureka node
+        // 从相邻的节点复制注册表 将相邻注册表的数量 当作自己的 注册表数量
         int registryCount = registry.syncUp();
+        //定时检查服务是否存在down机的方法
         registry.openForTraffic(applicationInfoManager, registryCount);
 
         // Register all monitoring statistics.

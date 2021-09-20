@@ -145,6 +145,7 @@ public class ApplicationResource {
                                 @HeaderParam(PeerEurekaNode.HEADER_REPLICATION) String isReplication) {
         logger.debug("Registering instance {} (replication={})", info.getId(), isReplication);
         // validate that the instanceinfo contains all the necessary required fields
+        //代码逻辑的防御性编程
         if (isBlank(info.getId())) {
             return Response.status(400).entity("Missing instanceId").build();
         } else if (isBlank(info.getHostName())) {
@@ -170,7 +171,7 @@ public class ApplicationResource {
                 if (experimental) {
                     String entity = "DataCenterInfo of type " + dataCenterInfo.getClass() + " must contain a valid id";
                     return Response.status(400).entity(entity).build();
-                } else if (dataCenterInfo instanceof AmazonInfo) {
+                } else if (dataCenterInfo instanceof AmazonInfo) { //这个应该使用策略模式
                     AmazonInfo amazonInfo = (AmazonInfo) dataCenterInfo;
                     String effectiveId = amazonInfo.get(AmazonInfo.MetaDataKey.instanceId);
                     if (effectiveId == null) {
@@ -181,7 +182,7 @@ public class ApplicationResource {
                 }
             }
         }
-
+        //注册表 将服务实例往注册表注册
         registry.register(info, "true".equals(isReplication));
         return Response.status(204).build();  // 204 to be backwards compatible
     }

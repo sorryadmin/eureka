@@ -43,13 +43,13 @@ class TestableInstanceReplicationTask extends InstanceReplicationTask {
     }
 
     @Override
-    public void handleSuccess() {
-        processingState.compareAndSet(ProcessingState.Pending, ProcessingState.Finished);
+    public void handleFailure(int statusCode, Object responseEntity) throws Throwable {
+        processingState.compareAndSet(ProcessingState.Pending, ProcessingState.Failed);
     }
 
     @Override
-    public void handleFailure(int statusCode, Object responseEntity) throws Throwable {
-        processingState.compareAndSet(ProcessingState.Pending, ProcessingState.Failed);
+    public void handleSuccess() {
+        processingState.compareAndSet(ProcessingState.Pending, ProcessingState.Finished);
     }
 
     public ProcessingState getProcessingState() {

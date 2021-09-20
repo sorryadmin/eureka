@@ -30,6 +30,7 @@ import com.netflix.eureka.registry.AbstractInstanceRegistry;
  *
  * @author Karthik Ranganathan, Greg Kim
  */
+//契约 包含服务注册实例
 public class Lease<T> {
 
     enum Action {
@@ -69,6 +70,7 @@ public class Lease<T> {
      */
     public void cancel() {
         if (evictionTimestamp <= 0) {
+            //服务实例下线的时间
             evictionTimestamp = System.currentTimeMillis();
         }
     }
@@ -79,6 +81,7 @@ public class Lease<T> {
      */
     public void serviceUp() {
         if (serviceUpTimestamp == 0) {
+            //服务实例上限时间更新
             serviceUpTimestamp = System.currentTimeMillis();
         }
     }

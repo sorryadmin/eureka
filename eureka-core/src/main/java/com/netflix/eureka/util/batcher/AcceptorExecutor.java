@@ -100,6 +100,7 @@ class AcceptorExecutor<ID, T> {
         this.trafficShaper = new TrafficShaper(congestionRetryDelayMs, networkFailureRetryMs);
 
         ThreadGroup threadGroup = new ThreadGroup("eurekaTaskExecutors");
+        //后台进程 AcceptorRunner 批量同步处理任务相关
         this.acceptorThread = new Thread(threadGroup, new AcceptorRunner(), "TaskAcceptor-" + id);
         this.acceptorThread.setDaemon(true);
         this.acceptorThread.start();
@@ -183,6 +184,7 @@ class AcceptorExecutor<ID, T> {
             long scheduleTime = 0;
             while (!isShutdown.get()) {
                 try {
+                    //组装数据
                     drainInputQueues();
 
                     int totalItems = processingOrder.size();
@@ -192,6 +194,7 @@ class AcceptorExecutor<ID, T> {
                         scheduleTime = now + trafficShaper.transmissionDelay();
                     }
                     if (scheduleTime <= now) {
+                        //开启批处理任务 分包操作
                         assignBatchWork();
                         assignSingleItemWork();
                     }
@@ -264,8 +267,8 @@ class AcceptorExecutor<ID, T> {
             }
             TaskHolder<ID, T> previousTask = pendingTasks.put(taskHolder.getId(), taskHolder);
             if (previousTask == null) {
-                processingOrder.add(taskHolder.getId());
             } else {
+                processingOrder.add(taskHolder.getId());
                 overriddenTasks++;
             }
         }

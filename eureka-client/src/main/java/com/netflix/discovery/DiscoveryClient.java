@@ -858,29 +858,33 @@ public class DiscoveryClient implements EurekaClient {
     /**
      * Shuts down Eureka Client. Also sends a deregistration request to the
      * eureka server.
+     * 关闭 erueka_client
      */
     @PreDestroy
     @Override
     public synchronized void shutdown() {
         if (isShutdown.compareAndSet(false, true)) {
             logger.info("Shutting down DiscoveryClient ...");
-
+            //这块逻辑 不是太重要
             if (statusChangeListener != null && applicationInfoManager != null) {
                 applicationInfoManager.unregisterStatusChangeListener(statusChangeListener.getId());
             }
-
+            //停止线程池 释放资源
             cancelScheduledTasks();
 
             // If APPINFO was registered
             if (applicationInfoManager != null && clientConfig.shouldRegisterWithEureka()) {
+                //将服务实例设置为down
                 applicationInfoManager.setInstanceStatus(InstanceStatus.DOWN);
+                //取消注册
                 unregister();
             }
 
             if (eurekaTransport != null) {
+                //关闭网络通信
                 eurekaTransport.shutdown();
             }
-
+            //关闭监听器
             heartbeatStalenessMonitor.shutdown();
             registryStalenessMonitor.shutdown();
 
@@ -1239,6 +1243,7 @@ public class DiscoveryClient implements EurekaClient {
             // registry cache refresh timer
             int registryFetchIntervalSeconds = clientConfig.getRegistryFetchIntervalSeconds();
             int expBackOffBound = clientConfig.getCacheRefreshExecutorExponentialBackOffBound();
+           //拉取增量注册表
             scheduler.schedule(
                     new TimedSupervisorTask(
                             "cacheRefresh",
@@ -1253,11 +1258,12 @@ public class DiscoveryClient implements EurekaClient {
         }
 
         if (clientConfig.shouldRegisterWithEureka()) {
+            //发送心跳的时间 每隔30秒
             int renewalIntervalInSecs = instanceInfo.getLeaseInfo().getRenewalIntervalInSecs();
             int expBackOffBound = clientConfig.getHeartbeatExecutorExponentialBackOffBound();
             logger.info("Starting heartbeat executor: " + "renew interval is: " + renewalIntervalInSecs);
 
-            // Heartbeat timer
+            //向eureka_server发送服务服务心跳
             scheduler.schedule(
                     new TimedSupervisorTask(
                             "heartbeat",
@@ -1390,7 +1396,7 @@ public class DiscoveryClient implements EurekaClient {
     private class HeartbeatThread implements Runnable {
 
         public void run() {
-            if (renew()) {
+            if (renew()) { //renew 续约成功将自己的健康检查的时间设为当前时间
                 lastSuccessfulHeartbeatTimestamp = System.currentTimeMillis();
             }
         }

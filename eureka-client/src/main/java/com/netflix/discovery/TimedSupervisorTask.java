@@ -93,6 +93,7 @@ public class TimedSupervisorTask extends TimerTask {
             }
 
             if (!scheduler.isShutdown()) {
+                //延时重新调度
                 scheduler.schedule(this, delay.get(), TimeUnit.MILLISECONDS);
             }
         }

@@ -80,8 +80,8 @@ public class PeerEurekaNode {
     private final String targetHost;
     private final HttpReplicationClient replicationClient;
 
-    private final TaskDispatcher<String, ReplicationTask> batchingDispatcher;
     private final TaskDispatcher<String, ReplicationTask> nonBatchingDispatcher;
+    private final TaskDispatcher<String, ReplicationTask> batchingDispatcher;
 
     public PeerEurekaNode(PeerAwareInstanceRegistry registry, String targetHost, String serviceUrl, HttpReplicationClient replicationClient, EurekaServerConfig config) {
         this(registry, targetHost, serviceUrl, replicationClient, config, BATCH_SIZE, MAX_BATCHING_DELAY_MS, RETRY_SLEEP_TIME_MS, SERVER_UNAVAILABLE_SLEEP_TIME_MS);

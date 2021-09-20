@@ -53,7 +53,9 @@ public class MeasuredRate {
                 @Override
                 public void run() {
                     try {
-                        // Zero out the current bucket.
+                        // 每分钟进来的时候 将 lastBucket 的值 设置为 currentBucket
+                        // lastBucket 是保存的上一分钟的结果
+                        // 线程开始的时候 将 currentBucket 设置为 0
                         lastBucket.set(currentBucket.getAndSet(0));
                     } catch (Throwable e) {
                         logger.error("Cannot reset the Measured Rate", e);
